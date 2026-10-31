@@ -66,7 +66,7 @@ export const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-3">
-              <span className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-extrabold">
+              <span className="w-8 h-8 rounded-full bg-rose-900 text-white flex items-center justify-center text-xs font-extrabold shadow-sm">
                 01
               </span>
               <h4 className="font-bold text-base text-slate-900 dark:text-white">First-Principles Clarity</h4>
@@ -76,7 +76,7 @@ export const About = () => {
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-3">
-              <span className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-extrabold">
+              <span className="w-8 h-8 rounded-full bg-orange-700 text-white flex items-center justify-center text-xs font-extrabold shadow-sm">
                 02
               </span>
               <h4 className="font-bold text-base text-slate-900 dark:text-white">Tiered Problem Sheets</h4>
@@ -86,7 +86,7 @@ export const About = () => {
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-3">
-              <span className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-extrabold">
+              <span className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-extrabold">
                 03
               </span>
               <h4 className="font-bold text-base text-slate-900 dark:text-white">Diagnostic Error Analysis</h4>

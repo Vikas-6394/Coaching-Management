@@ -15,11 +15,13 @@ import {
   PlayCircle
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { CourseCard } from '../../components/CourseCard';
 
 export const Home = () => {
-  const { courses, enrollCourse } = useData();
+  const { courses, students, enrollCourse } = useData();
+  const { user, isAuthenticated } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState(0);
@@ -84,8 +86,8 @@ export const Home = () => {
 
   const faqs = [
     {
-      q: "How does the simulated demo login work?",
-      a: "EduManage is an interactive frontend demonstration. You can click 'Demo Login' and choose between Student, Teacher, or Admin roles to immediately explore the system without server setup or credentials."
+      q: "How do I access student and teacher portals?",
+      a: "New students and teachers can click 'Login / Register' to easily create an account. You can select your batch or teaching specialization and get immediate access to your dashboard. Administrative access is restricted to the institute director."
     },
     {
       q: "Can I take mock tests and see results?",
@@ -102,25 +104,46 @@ export const Home = () => {
   ];
 
   const handleQuickEnroll = (course) => {
-    enrollCourse("STU-001", course.id);
-    toast.success(`Enrolled in "${course.title}"! Open Student Portal to resume learning.`, "Enrollment Successful");
+    if (!isAuthenticated) {
+      toast.warning(
+        `Please log in or register as a student to enroll in "${course.title}".`,
+        "Login Required"
+      );
+      navigate('/login', { state: { returnTo: `/courses/${course.id}` } });
+      return;
+    }
+
+    if (user?.role !== 'student') {
+      toast.info(
+        `You are currently logged in with a ${user?.role === 'admin' ? 'Director / Admin' : 'Faculty'} account. Please switch to a Student account to enroll in courses.`,
+        "Student Account Required"
+      );
+      return;
+    }
+
+    enrollCourse(user.id, course.id);
+    toast.success(
+      `Successfully enrolled in "${course.title}"! Opening your Student Portal now.`,
+      "Enrollment Successful"
+    );
+    navigate('/student/courses');
   };
 
   return (
     <div className="space-y-20 pb-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 bg-gradient-to-b from-blue-50/60 via-white to-transparent dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950">
+      <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 bg-gradient-to-b from-amber-500/5 via-transparent to-transparent dark:from-stone-900/40 dark:via-transparent dark:to-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-200 dark:border-blue-800">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
                 <Sparkles className="w-3.5 h-3.5" /> India's Premier Coaching Management Hub
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12]">
                 Shape Your Academic Future With{" "}
-                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-rose-800 via-orange-600 to-amber-500 bg-clip-text text-transparent">
                   EduManage
                 </span>
               </h1>
@@ -133,7 +156,7 @@ export const Home = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
                 <Link
                   to="/courses"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-102"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:from-amber-700 hover:to-rose-800 text-white font-bold text-sm shadow-xl shadow-orange-600/25 transition-all hover:scale-102"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span>Explore Courses</span>
@@ -144,7 +167,7 @@ export const Home = () => {
                   to="/login"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white font-bold text-sm border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
                 >
-                  <GraduationCap className="w-4 h-4 text-blue-600" />
+                  <GraduationCap className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   <span>Student & Teacher Login</span>
                 </Link>
               </div>
@@ -165,12 +188,12 @@ export const Home = () => {
 
             {/* Right Column: Hero Preview Card */}
             <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 p-1 shadow-2xl shadow-blue-600/20">
+              <div className="relative mx-auto max-w-md rounded-3xl bg-gradient-to-tr from-rose-950 via-amber-700 to-orange-600 p-1 shadow-2xl shadow-orange-600/20">
                 <div className="rounded-[22px] bg-white dark:bg-slate-900 p-6 space-y-6">
                   {/* Floating Metric Card */}
                   <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
                         <Award className="w-6 h-6" />
                       </div>
                       <div>
@@ -187,26 +210,26 @@ export const Home = () => {
                   <div className="grid grid-cols-2 gap-3 text-center">
                     <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                       <p className="text-xs text-slate-400 font-medium">Attendance</p>
-                      <p className="text-xl font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">94%</p>
+                      <p className="text-xl font-extrabold text-orange-600 dark:text-orange-400 mt-0.5">94%</p>
                     </div>
                     <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                       <p className="text-xs text-slate-400 font-medium">Mock Test Avg</p>
-                      <p className="text-xl font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">88/100</p>
+                      <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5">88/100</p>
                     </div>
                   </div>
 
                   {/* Live Upcoming Test Preview */}
-                  <div className="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 space-y-2">
+                  <div className="p-4 rounded-xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-blue-700 dark:text-blue-300">Live Mock Test Active</span>
-                      <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white font-bold text-[10px]">15m</span>
+                      <span className="font-bold text-amber-700 dark:text-amber-300">Live Mock Test Active</span>
+                      <span className="px-2 py-0.5 rounded-md bg-amber-600 text-white font-bold text-[10px]">15m</span>
                     </div>
                     <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
                       Physics Mock #04: Rotational Mechanics & Waves
                     </p>
                     <Link
                       to="/login"
-                      className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline pt-1"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline pt-1"
                     >
                       <span>Take Test Now</span>
                       <ArrowRight className="w-3 h-3" />
@@ -270,13 +293,19 @@ export const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {courses.slice(0, 4).map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              onEnroll={() => handleQuickEnroll(course)}
-            />
-          ))}
+          {courses.slice(0, 4).map((course) => {
+            const currentStudent = user?.role === 'student' ? students?.find((s) => s.id === user.id) : null;
+            const isEnrolled = !!currentStudent?.enrolledCourses?.includes(course.id);
+            return (
+              <CourseCard
+                key={course.id}
+                course={course}
+                isEnrolled={isEnrolled}
+                onEnroll={() => handleQuickEnroll(course)}
+                onResume={() => navigate('/student/courses')}
+              />
+            );
+          })}
         </div>
       </section>
 
@@ -411,12 +440,12 @@ export const Home = () => {
 
       {/* Final Call to Action */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-8 sm:p-12 text-white shadow-2xl shadow-blue-500/20 text-center space-y-6">
+        <div className="rounded-3xl bg-gradient-to-r from-rose-950 via-stone-900 to-amber-950 p-8 sm:p-12 text-white shadow-2xl shadow-rose-950/30 border border-amber-900/40 text-center space-y-6">
           <div className="max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               Ready to Experience EduManage?
             </h2>
-            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
+            <p className="text-sm sm:text-base text-amber-100 leading-relaxed">
               Explore the student dashboard, take a live mock test, evaluate teacher attendance workflows, or manage institute financials as an admin in seconds.
             </p>
           </div>
@@ -424,13 +453,13 @@ export const Home = () => {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/login"
-              className="px-6 py-3.5 rounded-2xl bg-white text-blue-700 hover:bg-blue-50 font-extrabold text-sm shadow-lg transition-all hover:scale-102"
+              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-extrabold text-sm shadow-lg shadow-orange-600/25 transition-all hover:scale-102"
             >
-              Access Demo Portals
+              Login / Register Now
             </Link>
             <Link
               to="/courses"
-              className="px-6 py-3.5 rounded-2xl bg-blue-700/60 hover:bg-blue-700 text-white font-bold text-sm border border-white/20 transition-all"
+              className="px-6 py-3.5 rounded-2xl bg-stone-900/80 hover:bg-stone-800 text-amber-200 font-bold text-sm border border-amber-700/40 transition-all"
             >
               Browse Syllabus & Fees
             </Link>

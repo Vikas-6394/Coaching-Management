@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
 import { useToast } from '../../context/ToastContext';
 import { FormInput } from '../../components/FormInput';
 import { Modal } from '../../components/Modal';
+import { resizeImageFile } from '../../utils/imageUtils';
 import {
   User,
   Mail,
@@ -11,28 +13,56 @@ import {
   KeyRound,
   Shield,
   Save,
-  GraduationCap
+  GraduationCap,
+  Camera,
+  Upload,
+  Trash2
 } from 'lucide-react';
 
 export const StudentProfile = () => {
   const { user, updateUserProfile } = useAuth();
+  const { updateStudent } = useData();
   const toast = useToast();
 
   const [formData, setFormData] = useState({
-    name: user?.name || "Aarav Sharma",
-    email: user?.email || "student@edumanage.com",
-    phone: user?.phone || "+91 98765 43210",
+    name: user?.name || "Student",
+    email: user?.email || "",
+    phone: user?.phone || "",
     batch: user?.batch || "JEE Advanced 2026",
-    rollNumber: user?.rollNumber || "2026-JEE-042",
-    guardianName: user?.guardianName || "Rajesh Sharma",
-    guardianPhone: "+91 98765 11111",
-    address: user?.address || "B-42, Vasant Vihar, New Delhi"
+    rollNumber: user?.rollNumber || "2026-STU-001",
+    guardianName: user?.guardianName || "Guardian",
+    guardianPhone: user?.guardianPhone || user?.phone || "",
+    address: user?.address || "EduManage Academic Campus, Ayodhya, UP, India"
   });
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageFile(file, 400, 400, 0.85);
+      updateUserProfile({ avatar: dataUrl, customPhotoUploaded: true });
+      if (user?.id) {
+        updateStudent(user.id, { avatar: dataUrl, customPhotoUploaded: true });
+      }
+      toast.success("Profile photograph updated successfully!", "Photo Updated");
+    } catch (err) {
+      toast.error(err.message || "Failed to update photo.", "Image Error");
+    }
+  };
+
+  const handleDeletePhoto = () => {
+    const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.name || 'Student')}`;
+    updateUserProfile({ avatar: defaultAvatar, customPhotoUploaded: false });
+    if (user?.id) {
+      updateStudent(user.id, { avatar: defaultAvatar, customPhotoUploaded: false });
+    }
+    toast.success("Profile photograph deleted! Default avatar restored.", "Photo Deleted");
+  };
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
@@ -73,12 +103,37 @@ export const StudentProfile = () => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Left Column: Avatar & Summary Badge */}
         <div className="md:col-span-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-center space-y-4 shadow-xs">
-          <div className="relative inline-block">
+          <div className="relative inline-block group">
             <img
-              src={user?.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80"}
+              src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.name || 'Student')}`}
               alt={user?.name}
-              className="w-24 h-24 rounded-3xl object-cover mx-auto ring-4 ring-blue-500/20 shadow-lg"
+              className="w-24 h-24 rounded-3xl object-cover mx-auto ring-4 ring-blue-500/20 shadow-lg bg-slate-100 dark:bg-slate-800"
             />
+            <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
+              <label
+                className="p-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer transition-transform hover:scale-110 flex items-center justify-center ring-2 ring-white dark:ring-slate-900"
+                title="Change your profile photograph"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+
+              {user?.customPhotoUploaded && (
+                <button
+                  type="button"
+                  onClick={handleDeletePhoto}
+                  className="p-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md cursor-pointer transition-transform hover:scale-110 flex items-center justify-center ring-2 ring-white dark:ring-slate-900"
+                  title="Delete uploaded photograph"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
 
           <div>

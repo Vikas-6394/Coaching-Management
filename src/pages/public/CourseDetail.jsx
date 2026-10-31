@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { StatusBadge } from '../../components/StatusBadge';
 import {
@@ -18,17 +19,35 @@ import {
 export const CourseDetail = () => {
   const { id } = useParams();
   const { courses, enrollCourse, students } = useData();
+  const { user, isAuthenticated } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
 
   const course = courses.find((c) => c.id === id) || courses[0];
 
-  const student = students.find((s) => s.id === "STU-001");
-  const isEnrolled = student?.enrolledCourses?.includes(course.id);
+  const student = user?.role === 'student' ? students.find((s) => s.id === user.id) : null;
+  const isEnrolled = !!student?.enrolledCourses?.includes(course.id);
 
   const handleEnroll = () => {
-    enrollCourse("STU-001", course.id);
-    toast.success(`Enrolled in "${course.title}". Opening Student Portal!`, "Enrollment Success");
+    if (!isAuthenticated) {
+      toast.warning(
+        `Please log in or register as a student to enroll in "${course.title}".`,
+        "Login Required"
+      );
+      navigate('/login', { state: { returnTo: `/courses/${course.id}` } });
+      return;
+    }
+
+    if (user?.role !== 'student') {
+      toast.info(
+        `You are currently logged in with a ${user?.role === 'admin' ? 'Director / Admin' : 'Faculty'} account. Please switch to a Student account to enroll in courses.`,
+        "Student Account Required"
+      );
+      return;
+    }
+
+    enrollCourse(user.id, course.id);
+    toast.success(`Successfully enrolled in "${course.title}"! Opening your Student Portal now.`, "Enrollment Successful");
     navigate('/student/courses');
   };
 
@@ -160,9 +179,9 @@ export const CourseDetail = () => {
               <button
                 type="button"
                 onClick={handleEnroll}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-101"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:from-amber-700 hover:to-rose-800 text-white font-bold text-sm shadow-xl shadow-orange-600/25 transition-all hover:scale-101"
               >
-                Enroll Now (Instant Demo)
+                Enroll Now
               </button>
             )}
 

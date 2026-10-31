@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { StatCard } from '../../components/StatCard';
 import { ChartCard } from '../../components/ChartCard';
@@ -30,6 +31,7 @@ import {
 } from 'recharts';
 
 export const AdminDashboard = () => {
+  const { user } = useAuth();
   const { students, teachers, courses, fees, attendance } = useData();
   const navigate = useNavigate();
 
@@ -63,31 +65,53 @@ export const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Admin Title Header */}
-      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-500/30">
-              Executive Administration Console
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Institute Operations & Financial Health 🏛️
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
-              Monitoring {totalStudents} active students, {totalTeachers} faculty members, and ₹{(totalFeesCollected / 100000).toFixed(2)} Lakhs in cumulative fee collections.
-            </p>
+      {/* Admin Title Header with Executive Director Showcase */}
+      <div className="rounded-3xl bg-gradient-to-r from-stone-950 via-rose-950 to-stone-900 p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-rose-900/40">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+            {/* Admin Photo with Online Status Indicator */}
+            <div className="relative shrink-0">
+              <img
+                src={user?.avatar || "/admin-avatar.jpg"}
+                alt={user?.name || "Vikas Maurya"}
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-amber-500/40 shadow-2xl bg-stone-900"
+              />
+              <span
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 ring-2 ring-stone-900 flex items-center justify-center text-white"
+                title="System Director - Online & Authenticated"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30">
+                  Executive Administration Console
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[11px] font-semibold border border-rose-500/30">
+                  Director: {user?.name || "Vikas Maurya"}
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Institute Operations & Financial Health 🏛️
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-300 max-w-xl leading-relaxed">
+                Welcome, <span className="text-white font-bold">{user?.name || "Mr. Vikas Maurya"}</span> ({user?.designation || "Executive Director & System Administrator"}). Monitoring {totalStudents} active students, {totalTeachers} faculty members, and ₹{(totalFeesCollected / 100000).toFixed(2)} Lakhs in collections.
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
             <button
               onClick={() => navigate('/admin/students')}
-              className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all hover:scale-102 flex items-center justify-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:from-amber-700 hover:to-rose-800 text-white font-bold text-xs shadow-md shadow-orange-600/25 transition-all hover:scale-102 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Users className="w-4 h-4" /> Manage Students
             </button>
             <button
               onClick={() => navigate('/admin/fees')}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-all flex items-center justify-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs border border-stone-700 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <CreditCard className="w-4 h-4" /> Financial Invoices
             </button>

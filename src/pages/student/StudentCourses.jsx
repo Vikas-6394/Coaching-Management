@@ -106,7 +106,7 @@ export const StudentCourses = () => {
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 transition-all duration-500"
                       style={{ width: `${progress}%` }}
                     />
                   </div>

@@ -18,25 +18,15 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  RotateCcw,
   ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useData } from '../context/DataContext';
 import { useToast } from '../context/ToastContext';
 
 export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
-  const { user, role, logout, loginAsRole } = useAuth();
-  const { resetAllData } = useData();
+  const { user, role, logout } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
-
-  const handleResetData = () => {
-    if (window.confirm("Reset all demo data back to default initial state?")) {
-      resetAllData();
-      toast.info("Demo data reset to factory default state.", "Data Reset");
-    }
-  };
 
   const navConfig = {
     student: [
@@ -74,13 +64,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobile
 
   const links = navConfig[role] || navConfig.student;
 
-  const handleRoleSwitch = (newRole) => {
-    loginAsRole(newRole);
-    navigate(`/${newRole}`);
-    toast.info(`Switched to ${newRole.toUpperCase()} demo view`);
-    if (setIsMobileOpen) setIsMobileOpen(false);
-  };
-
   return (
     <>
       {/* Mobile Backdrop */}
@@ -98,54 +81,85 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobile
         } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Header */}
-        <div className="h-18 px-5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 shrink-0">
-          <NavLink to="/" className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/25">
-              <GraduationCap className="w-6 h-6" />
+        <div
+          className={`h-18 flex items-center border-b border-slate-100 dark:border-slate-800 shrink-0 transition-all ${
+            isCollapsed ? 'justify-center px-0' : 'justify-between px-5'
+          }`}
+        >
+          <NavLink
+            to={`/${role}`}
+            className={`flex items-center gap-3 overflow-hidden ${
+              isCollapsed ? 'justify-center' : ''
+            }`}
+            title="EduManage"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-950 via-amber-700 to-orange-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-600/25">
+              <GraduationCap className="w-6 h-6 shrink-0" />
             </div>
             {!isCollapsed && (
-              <div className="flex flex-col">
-                <span className="font-extrabold text-lg text-slate-900 dark:text-white leading-tight">
-                  Edu<span className="text-blue-600 dark:text-blue-400">Manage</span>
+              <div className="flex flex-col min-w-0">
+                <span className="font-extrabold text-lg text-slate-900 dark:text-white leading-tight truncate">
+                  Edu<span className="text-orange-600 dark:text-orange-400">Manage</span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
                   {role} portal
                 </span>
               </div>
             )}
           </NavLink>
-
-          <button
-            type="button"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
         </div>
 
-        {/* Quick Role Switcher Pill Bar (if not collapsed) */}
-        {!isCollapsed && (
-          <div className="p-3 mx-3 my-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">
-              Switch Demo Role
-            </p>
-            <div className="grid grid-cols-3 gap-1">
-              {['student', 'teacher', 'admin'].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => handleRoleSwitch(r)}
-                  className={`py-1 text-xs font-semibold rounded-lg capitalize transition-all ${
-                    role === r
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700'
+        {/* Floating Expand/Collapse Button on Sidebar Border */}
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="hidden lg:flex absolute -right-3.5 top-5.5 z-50 w-7 h-7 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+        </button>
+
+        {/* Logged in User Profile Card */}
+        {!isCollapsed && user && (
+          <div className="p-3 mx-3 my-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-3">
+            <img
+              src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name || 'User')}`}
+              alt={user.name}
+              className="w-10 h-10 rounded-xl object-cover ring-2 ring-blue-500/20 shrink-0 bg-slate-100 dark:bg-slate-700"
+            />
+            <div className="min-w-0 flex-1">
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                {user.name}
+              </h4>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span
+                  className={`inline-block text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md ${
+                    role === 'admin'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                      : role === 'teacher'
+                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                      : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                   }`}
                 >
-                  {r}
-                </button>
-              ))}
+                  {role}
+                </span>
+                <span className="text-[10px] text-slate-400 truncate">
+                  {user.rollNumber || user.email}
+                </span>
+              </div>
             </div>
+          </div>
+        )}
+
+        {/* Centered Avatar in Collapsed State */}
+        {isCollapsed && user && (
+          <div className="my-2 flex justify-center shrink-0" title={`${user.name} (${role})`}>
+            <img
+              src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name || 'User')}`}
+              alt={user.name}
+              className="w-10 h-10 rounded-xl object-cover ring-2 ring-blue-500/20 bg-slate-100 dark:bg-slate-700 shadow-xs"
+            />
           </div>
         )}
 
@@ -179,18 +193,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobile
 
         {/* Bottom Utility Controls */}
         <div className="p-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={handleResetData}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
-            title="Reset sample data back to factory defaults"
-          >
-            <RotateCcw className="w-4 h-4 shrink-0" />
-            {!isCollapsed && <span>Reset Demo Data</span>}
-          </button>
-
           <button
             type="button"
             onClick={() => {

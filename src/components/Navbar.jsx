@@ -22,12 +22,12 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-700 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform duration-300">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-950 via-amber-700 to-orange-600 text-white flex items-center justify-center shadow-lg shadow-orange-600/25 group-hover:scale-105 transition-transform duration-300">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="flex flex-col">
             <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white leading-none">
-              Edu<span className="text-blue-600 dark:text-blue-400">Manage</span>
+              Edu<span className="text-orange-600 dark:text-orange-400">Manage</span>
             </span>
             <span className="text-[10px] font-semibold text-slate-400 tracking-wider uppercase mt-0.5">
               Coaching Platform
@@ -42,8 +42,8 @@ export const Navbar = () => {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
-                  isActive ? 'text-blue-600 dark:text-blue-400 font-bold' : ''
+                `transition-colors hover:text-orange-600 dark:hover:text-orange-400 py-1 ${
+                  isActive ? 'text-orange-600 dark:text-orange-400 font-bold' : ''
                 }`
               }
             >
@@ -66,7 +66,7 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <button
               onClick={() => navigate(`/${user.role}`)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/25 transition-all hover:scale-102"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:from-amber-700 hover:to-rose-800 text-white shadow-md shadow-orange-600/25 transition-all hover:scale-102"
             >
               <LayoutDashboard className="w-4 h-4" />
               <span>{user.role.toUpperCase()} Portal</span>
@@ -75,10 +75,10 @@ export const Navbar = () => {
           ) : (
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/20 transition-all hover:scale-102"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:from-amber-700 hover:to-rose-800 text-white shadow-md shadow-orange-600/20 transition-all hover:scale-102"
             >
               <LogIn className="w-4 h-4" />
-              <span>Demo Login</span>
+              <span>Login / Register</span>
             </Link>
           )}
         </div>
@@ -116,7 +116,7 @@ export const Navbar = () => {
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-xl text-base font-semibold transition-colors ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                      ? 'bg-orange-50 dark:bg-rose-950/60 text-orange-600 dark:text-orange-400'
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`
                 }
@@ -133,7 +133,7 @@ export const Navbar = () => {
                   setMobileMenuOpen(false);
                   navigate(`/${user.role}`);
                 }}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 text-white shadow-md shadow-orange-600/20"
               >
                 <LayoutDashboard className="w-4 h-4" /> Go to {user.role.toUpperCase()} Dashboard
               </button>
@@ -141,9 +141,9 @@ export const Navbar = () => {
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 text-white shadow-md shadow-orange-600/20"
               >
-                <LogIn className="w-4 h-4" /> Access Demo Portals
+                <LogIn className="w-4 h-4" /> Login / Register
               </Link>
             )}
           </div>

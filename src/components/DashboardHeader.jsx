@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell, Search, User, LogOut, CheckCircle, ExternalLink } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, Search, User, LogOut, CheckCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
@@ -43,9 +43,29 @@ export const DashboardHeader = ({ onMobileMenuToggle }) => {
 
         {/* Right Action Icons & Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Auto-Logout Security Indicator for Admin & Teacher */}
+          {(role === 'admin' || role === 'teacher') && (
+            <div
+              className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
+                role === 'admin'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                  : 'bg-purple-50 dark:bg-purple-950/60 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300'
+              }`}
+              title={`${role === 'admin' ? 'Admin' : 'Teacher'} session is protected with automatic logout after 5 minutes of inactivity`}
+            >
+              <ShieldCheck className={`w-3.5 h-3.5 ${role === 'admin' ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}`} />
+              <span>5m Inactivity Logout Active</span>
+            </div>
+          )}
+
           {/* Public site link */}
           <Link
             to="/"
+            onClick={() => {
+              if (role === 'admin') {
+                logout();
+              }
+            }}
             className="hidden md:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors"
           >
             <span>Public Site</span>

@@ -3,8 +3,8 @@ export const INITIAL_STUDENTS = [
   {
     id: "STU-001",
     name: "Aarav Sharma",
-    email: "aarav.sharma@example.com",
-    phone: "+91 98765 43210",
+    email: "vikasmaurya195771@gmail.com",
+    phone: "6394195771",
     avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
     enrolledCourses: ["CRS-001", "CRS-003"],
     batch: "JEE Advanced 2026",
@@ -17,7 +17,7 @@ export const INITIAL_STUDENTS = [
     pendingAmount: 0,
     performanceGrade: "A+",
     guardianName: "Rajesh Sharma",
-    guardianPhone: "+91 98765 11111",
+    guardianPhone: "6394195771",
     address: "B-42, Vasant Vihar, New Delhi",
     status: "Active"
   },

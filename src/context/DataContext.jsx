@@ -15,15 +15,25 @@ import { getStoredItem, setStoredItem, STORAGE_KEYS, resetToDefaults } from '../
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  const [students, setStudents] = useState(() => getStoredItem(STORAGE_KEYS.STUDENTS, INITIAL_STUDENTS));
-  const [teachers, setTeachers] = useState(() => getStoredItem(STORAGE_KEYS.TEACHERS, INITIAL_TEACHERS));
-  const [courses, setCourses] = useState(() => getStoredItem(STORAGE_KEYS.COURSES, INITIAL_COURSES));
-  const [attendance, setAttendance] = useState(() => getStoredItem(STORAGE_KEYS.ATTENDANCE, INITIAL_ATTENDANCE));
-  const [fees, setFees] = useState(() => getStoredItem(STORAGE_KEYS.FEES, INITIAL_FEES));
-  const [tests, setTests] = useState(() => getStoredItem(STORAGE_KEYS.TESTS, INITIAL_TESTS));
-  const [studyMaterials, setStudyMaterials] = useState(() => getStoredItem(STORAGE_KEYS.STUDY_MATERIALS, INITIAL_STUDY_MATERIALS));
-  const [announcements, setAnnouncements] = useState(() => getStoredItem(STORAGE_KEYS.ANNOUNCEMENTS, INITIAL_ANNOUNCEMENTS));
-  const [assignments, setAssignments] = useState(() => getStoredItem(STORAGE_KEYS.ASSIGNMENTS, INITIAL_ASSIGNMENTS));
+  const deduplicateById = (items) => {
+    if (!Array.isArray(items)) return items;
+    const seen = new Set();
+    return items.filter(item => {
+      if (!item || !item.id || seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  };
+
+  const [students, setStudents] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.STUDENTS, INITIAL_STUDENTS)));
+  const [teachers, setTeachers] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.TEACHERS, INITIAL_TEACHERS)));
+  const [courses, setCourses] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.COURSES, INITIAL_COURSES)));
+  const [attendance, setAttendance] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.ATTENDANCE, INITIAL_ATTENDANCE)));
+  const [fees, setFees] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.FEES, INITIAL_FEES)));
+  const [tests, setTests] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.TESTS, INITIAL_TESTS)));
+  const [studyMaterials, setStudyMaterials] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.STUDY_MATERIALS, INITIAL_STUDY_MATERIALS)));
+  const [announcements, setAnnouncements] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.ANNOUNCEMENTS, INITIAL_ANNOUNCEMENTS)));
+  const [assignments, setAssignments] = useState(() => deduplicateById(getStoredItem(STORAGE_KEYS.ASSIGNMENTS, INITIAL_ASSIGNMENTS)));
 
   // Student test attempts & results storage
   const [testResults, setTestResults] = useState(() => {
@@ -62,12 +72,13 @@ export const DataProvider = ({ children }) => {
   const addStudent = (studentData) => {
     const newStudent = {
       ...studentData,
-      id: `STU-${String(students.length + 1).padStart(3, '0')}`,
+      id: studentData.id || `STU-${String(students.length + 1).padStart(3, '0')}`,
       admissionDate: new Date().toISOString().split('T')[0],
       attendanceRate: 100,
       feeStatus: studentData.paidFees >= studentData.totalFees ? 'Paid' : 'Pending',
       status: 'Active',
-      avatar: studentData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(studentData.name)}`
+      avatar: studentData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(studentData.name)}`,
+      customPhotoUploaded: !!studentData.avatar
     };
     setStudents(prev => [newStudent, ...prev]);
     return newStudent;
@@ -85,9 +96,10 @@ export const DataProvider = ({ children }) => {
   const addTeacher = (teacherData) => {
     const newTeacher = {
       ...teacherData,
-      id: `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
+      id: teacherData.id || `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
       activeStatus: 'Active',
-      avatar: teacherData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(teacherData.name)}`
+      avatar: teacherData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(teacherData.name)}`,
+      customPhotoUploaded: !!teacherData.customPhotoUploaded || (!!teacherData.avatar && !teacherData.avatar.includes('dicebear'))
     };
     setTeachers(prev => [newTeacher, ...prev]);
     return newTeacher;
@@ -163,11 +175,15 @@ export const DataProvider = ({ children }) => {
   // Attendance
   const markAttendanceBatch = (date, courseId, records) => {
     // records is an array of { studentId, studentName, status, remark }
+    const subjectTitle = courseId === "all"
+      ? "All Batches Combined Roll Call"
+      : (courses.find(c => c.id === courseId)?.title || "Classroom Lecture");
+
     const newRecords = records.map((r, idx) => ({
       id: `ATT-${Date.now()}-${idx}`,
       date,
       courseId,
-      subject: courses.find(c => c.id === courseId)?.title || "Lecture",
+      subject: subjectTitle,
       studentId: r.studentId,
       studentName: r.studentName,
       status: r.status,
@@ -179,6 +195,20 @@ export const DataProvider = ({ children }) => {
       const filtered = prev.filter(p => !(p.date === date && p.courseId === courseId && records.some(r => r.studentId === p.studentId)));
       return [...newRecords, ...filtered];
     });
+
+    // Dynamically update student attendance rates so dashboards and profile pages reflect real-time attendance
+    setStudents(prev => prev.map(s => {
+      const rec = records.find(r => r.studentId === s.id);
+      if (!rec) return s;
+      const currentRate = s.attendanceRate ?? 90;
+      let newRate = currentRate;
+      if (rec.status === "Present") {
+        newRate = Math.min(100, currentRate + 1);
+      } else if (rec.status === "Absent") {
+        newRate = Math.max(40, currentRate - 2);
+      }
+      return { ...s, attendanceRate: newRate };
+    }));
   };
 
   // Fees

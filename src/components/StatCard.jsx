@@ -14,7 +14,7 @@ export const StatCard = ({
   const colorMap = {
     blue: {
       bg: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/50",
-      accent: "from-blue-600 to-indigo-600"
+      accent: "from-amber-600 via-orange-600 to-rose-700"
     },
     purple: {
       bg: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900/50",

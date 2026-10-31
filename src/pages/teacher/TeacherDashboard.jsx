@@ -53,7 +53,7 @@ export const TeacherDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Faculty Welcome Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 p-6 sm:p-8 text-white shadow-xl shadow-blue-600/15">
+      <div className="rounded-3xl bg-gradient-to-r from-rose-950 via-stone-900 to-amber-950 p-6 sm:p-8 text-white shadow-xl shadow-rose-950/25 border border-amber-900/30">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-bold uppercase tracking-wider">
@@ -62,7 +62,7 @@ export const TeacherDashboard = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Good day, {user?.name}! 🎓
             </h2>
-            <p className="text-xs sm:text-sm text-blue-100 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-amber-100 max-w-xl leading-relaxed">
               You have 3 scheduled classroom lectures today. Today's attendance session for JEE Advanced Pinnacle Batch is ready to be logged.
             </p>
           </div>
@@ -70,7 +70,7 @@ export const TeacherDashboard = () => {
           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
             <button
               onClick={() => navigate('/teacher/attendance')}
-              className="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shadow-md transition-all hover:scale-102 flex items-center justify-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-white text-rose-900 hover:bg-amber-50 font-bold text-xs shadow-md transition-all hover:scale-102 flex items-center justify-center gap-1.5"
             >
               <CalendarCheck className="w-4 h-4" /> Take Attendance
             </button>

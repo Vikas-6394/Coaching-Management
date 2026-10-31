@@ -72,7 +72,7 @@ export const StudentDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-8 text-white shadow-xl shadow-blue-500/15">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-950 via-stone-900 to-amber-950 p-6 sm:p-8 text-white shadow-xl shadow-rose-950/25 border border-amber-900/30">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-bold uppercase tracking-wider">
@@ -83,7 +83,7 @@ export const StudentDashboard = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Welcome back, {user?.name}! 👋
             </h2>
-            <p className="text-xs sm:text-sm text-blue-100 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-amber-100 max-w-xl leading-relaxed">
               You are currently on track for Phase 2 test preparation. Your attendance is at {attendanceRate}% and you have 2 upcoming diagnostic tests this week.
             </p>
           </div>
@@ -91,7 +91,7 @@ export const StudentDashboard = () => {
           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
             <button
               onClick={() => navigate('/student/tests')}
-              className="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shadow-md transition-all hover:scale-102 flex items-center justify-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-white text-rose-900 hover:bg-amber-50 font-bold text-xs shadow-md transition-all hover:scale-102 flex items-center justify-center gap-1.5"
             >
               <HelpCircle className="w-4 h-4" /> Start Mock Test
             </button>

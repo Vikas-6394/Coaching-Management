@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Mail, Phone, MapPin, Heart, ArrowRight } from 'lucide-react';
+import { GraduationCap, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 export const Footer = () => {
@@ -24,11 +24,11 @@ export const Footer = () => {
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="inline-flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/25">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-950 via-amber-700 to-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-600/25">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-                Edu<span className="text-blue-600 dark:text-blue-400">Manage</span>
+                Edu<span className="text-orange-600 dark:text-orange-400">Manage</span>
               </span>
             </Link>
 
@@ -38,16 +38,20 @@ export const Footer = () => {
 
             <div className="pt-2 flex flex-col space-y-2 text-xs text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>EduManage Tower, Sector 62, Noida, NCR, India</span>
+                <MapPin className="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                <span>EduManage Academic Campus, Ayodhya, UP, India</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>+91 1800-200-9944 (Toll-Free Mon–Sat 9AM–7PM)</span>
+                <Phone className="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                <a href="tel:+916394195771" className="hover:text-orange-600 dark:hover:text-orange-400 font-semibold transition-colors">
+                  +916394195771
+                </a>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>admissions@edumanage.com</span>
+                <Mail className="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                <a href="mailto:vikasmaurya195771@gmail.com" className="hover:text-orange-600 dark:hover:text-orange-400 font-semibold transition-colors">
+                  vikasmaurya195771@gmail.com
+                </a>
               </div>
             </div>
           </div>
@@ -66,17 +70,17 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Demo Portals */}
+          {/* Portal Access */}
           <div className="space-y-3">
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-white">
-              Portals (Frontend Demo)
+              Portal Access
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
-              <li><Link to="/student" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Student Dashboard</Link></li>
-              <li><Link to="/teacher" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Teacher Portal</Link></li>
-              <li><Link to="/admin" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Admin Console</Link></li>
-              <li><Link to="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Role Switcher & Login</Link></li>
+              <li><Link to="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Student Login / Register</Link></li>
+              <li><Link to="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Faculty / Teacher Login</Link></li>
+              <li><Link to="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Admin Secure Login</Link></li>
               <li><Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About Our Institute</Link></li>
+              <li><Link to="/contact" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact Admissions</Link></li>
             </ul>
           </div>
 
@@ -108,10 +112,16 @@ export const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
-          <p>© {new Date().getFullYear()} EduManage Coaching Management System. Frontend Portfolio Project.</p>
-          <div className="flex items-center gap-1">
-            <span>Built with modern React.js, Tailwind CSS & Vite</span>
+        <div className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-3">
+          <p>© {new Date().getFullYear()} EduManage Coaching Management System. All Rights Reserved Mr. Vikas Maurya</p>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+              Privacy Policy
+            </span>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+              T&C
+            </span>
           </div>
         </div>
       </div>

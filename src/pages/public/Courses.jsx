@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { CourseCard } from '../../components/CourseCard';
 import { SearchFilter } from '../../components/SearchFilter';
@@ -7,7 +9,9 @@ import { BookOpen } from 'lucide-react';
 
 export const Courses = () => {
   const { courses, enrollCourse, students } = useData();
+  const { user, isAuthenticated } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedLevel, setSelectedLevel] = useState("All");
@@ -35,12 +39,29 @@ export const Courses = () => {
   }, [courses, searchTerm, selectedCategory, selectedLevel]);
 
   const handleEnroll = (course) => {
-    // Enroll demo student STU-001
-    enrollCourse("STU-001", course.id);
+    if (!isAuthenticated) {
+      toast.warning(
+        `Please log in or register as a student to enroll in "${course.title}".`,
+        "Login Required"
+      );
+      navigate('/login', { state: { returnTo: `/courses/${course.id}` } });
+      return;
+    }
+
+    if (user?.role !== 'student') {
+      toast.info(
+        `You are currently logged in with a ${user?.role === 'admin' ? 'Director / Admin' : 'Faculty'} account. Please switch to a Student account to enroll in courses.`,
+        "Student Account Required"
+      );
+      return;
+    }
+
+    enrollCourse(user.id, course.id);
     toast.success(
-      `Successfully enrolled in "${course.title}". Check your Student Portal to access materials!`,
-      "Enrolled"
+      `Successfully enrolled in "${course.title}"! Opening your Student Portal now.`,
+      "Enrollment Successful"
     );
+    navigate('/student/courses');
   };
 
   return (
@@ -93,13 +114,19 @@ export const Courses = () => {
       {/* Course Grid */}
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              onEnroll={() => handleEnroll(course)}
-            />
-          ))}
+          {filteredCourses.map((course) => {
+            const currentStudent = user?.role === 'student' ? students?.find((s) => s.id === user.id) : null;
+            const isEnrolled = !!currentStudent?.enrolledCourses?.includes(course.id);
+            return (
+              <CourseCard
+                key={course.id}
+                course={course}
+                isEnrolled={isEnrolled}
+                onEnroll={() => handleEnroll(course)}
+                onResume={() => navigate('/student/courses')}
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800 space-y-3">

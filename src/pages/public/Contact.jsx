@@ -9,13 +9,12 @@ export const Contact = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful }
+    formState: { errors, isSubmitting }
   } = useForm();
 
   const onSubmit = (data) => {
-    // Client-side demo submission
     toast.success(
-      `Thank you ${data.name}! We have received your inquiry regarding "${data.subject}". Our admissions counselor will contact you at ${data.phone}.`,
+      `Thank you ${data.name}! We have received your inquiry regarding "${data.subject}". We will contact you at ${data.phone}.`,
       "Inquiry Submitted"
     );
     reset();
@@ -32,7 +31,7 @@ export const Contact = () => {
           Contact Our Admissions Team
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-          Have questions regarding JEE/NEET batches, scholarship tests, or fee structures? Speak with an academic advisor today.
+          Have questions regarding JEE/NEET batches, scholarship tests, or fee structures? Speak with our academic counselors directly.
         </p>
       </div>
 
@@ -41,7 +40,7 @@ export const Contact = () => {
         <div className="lg:col-span-5 space-y-6">
           <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-6">
             <h3 className="font-bold text-lg text-slate-900 dark:text-white">
-              Campus Headquarters
+              Campus & Contact Information
             </h3>
 
             <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
@@ -50,8 +49,8 @@ export const Contact = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="text-slate-800 dark:text-slate-200 block">Noida Main Campus</strong>
-                  EduManage Tower, Plot 14, Sector 62, Institutional Area, Noida, UP 201309
+                  <strong className="text-slate-800 dark:text-slate-200 block">Main Campus</strong>
+                  EduManage Academic Campus, Ayodhya, UP, India
                 </div>
               </div>
 
@@ -60,8 +59,10 @@ export const Contact = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="text-slate-800 dark:text-slate-200 block">Student Helpline</strong>
-                  +91 1800-200-9944 / +91 98110 99881
+                  <strong className="text-slate-800 dark:text-slate-200 block">Direct Helpline / WhatsApp</strong>
+                  <a href="tel:+916394195771" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
+                    +916394195771
+                  </a>
                 </div>
               </div>
 
@@ -70,8 +71,10 @@ export const Contact = () => {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="text-slate-800 dark:text-slate-200 block">Email Admissions</strong>
-                  admissions@edumanage.com / counseling@edumanage.com
+                  <strong className="text-slate-800 dark:text-slate-200 block">Email Admissions & Inquiries</strong>
+                  <a href="mailto:vikasmaurya195771@gmail.com" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
+                    vikasmaurya195771@gmail.com
+                  </a>
                 </div>
               </div>
 
@@ -146,7 +149,7 @@ export const Contact = () => {
                   </label>
                   <input
                     type="tel"
-                    placeholder="+91 98765 43210"
+                    placeholder="e.g. 9876543210"
                     {...register("phone", {
                       required: "Phone number is required",
                       minLength: { value: 10, message: "Enter at least 10 digits" }
@@ -202,7 +205,7 @@ export const Contact = () => {
                 className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 transition-all hover:scale-101 disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
-                <span>Submit Inquiry (Demo)</span>
+                <span>Submit Inquiry</span>
               </button>
             </form>
           </div>
